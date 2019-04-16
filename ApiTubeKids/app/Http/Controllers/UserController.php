@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -25,7 +26,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        
+
     }
 
     /**
@@ -36,10 +37,35 @@ class UserController extends Controller
      */
     public function store(Request $request)
     { 
-        $user = User::create($request->all());
-        return response()->json($user, 201);
-    }
 
+        $rules = [
+            'name' => 'required',
+            'first_last_name' => 'required',
+            'second_last_name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|confirmed',
+            'country' => 'required',
+            'birthdate' => 'required',
+            'phone' => 'required'
+        ];
+        $this->validate($request, $rules);
+
+        $date = Carbon::now();
+        $date = $date->format('d-m-Y');
+        $dateUser = Carbon::parse($request->birthdate)->format('d-m-Y');
+        $date = Carbon::createFromDate($dateUser)->age;
+
+        $request['verifide'] = User::USUARIO_NO_VERIFICADO;
+        $request['verification_token'] = User::generarVerificationToken();
+
+        if($date<18){
+         return response()->json(['error'=>'Tienes que ser mayor de 18 años', 'code'=>409], 409);
+        }else{
+         $user = User::create($request->all());
+         return response()->json($user, 201); 
+     }
+
+ }
     /**
      * Display the specified resource.
      *
