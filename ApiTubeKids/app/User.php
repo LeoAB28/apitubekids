@@ -2,16 +2,14 @@
 
 namespace App;
 
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
-    const USUARIO_VERIFICADO = '1';
-    const USUARIO_NO_VERIFICADO = '0';
     /**
      * The attributes that are mass assignable.
      *
@@ -21,27 +19,13 @@ class User extends Authenticatable
       'name', 
       'first_last_name', 
       'second_last_name', 
-      'email', 
-      'email_verified_at', 
-      'password',
-      'verified',
-      'verification_token', 
+      'email',  
+      'password', 
       'country', 
       'birthdate', 
       'phone',
-      
+
     ];
-
-    public function setNameAttribue($valor){
-        $this->attributes['name'] = strtolower($valor);
-    }
-    public function getNameAttribute($valor){
-        return ucfirst($valor);
-    }
-
-     public function setEmailAttribue($valor){
-        $this->attributes['email'] = strtolower($valor);
-    }
 
     /**
      * The attributes that should be hidden for arrays.
@@ -49,25 +33,33 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 
-        'remember_token',
-        'verification_token',
+        'password', 'remember_token',
     ];
+
+    // Rest omitted for brevity
 
     /**
-     * The attributes that should be cast to native types.
+     * Get the identifier that will be stored in the subject claim of the JWT.
      *
-     * @var array
+     * @return mixed
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
-    public function esVerificado(){
-        return $this->verified == User::USUARIO_VERIFICADO;
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
     }
 
-    public static function generarVerificationToken(){
-        return str_random(40);
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = bcrypt($value);
     }
 }
