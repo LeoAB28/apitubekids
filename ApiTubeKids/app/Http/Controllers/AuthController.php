@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SignUpRequest;
 use App\User;
+use Carbon\Carbon;
 
 
 class AuthController extends Controller
@@ -38,9 +39,24 @@ class AuthController extends Controller
 
     public function signup(SignUpRequest $request)
     {
+
+        $date = Carbon::now();
+        $date = $date->format('d-m-Y');
+        $dateUser = $request->birthdate;
+        $dateUser = Carbon::parse($dateUser)->format('d-m-Y');
+        $years = Carbon::parse($dateUser)->age;
+
+        if($years<18){
+         return response()->json(['error'=>'Tienes que ser mayor de 18 años', 'code'=>409], 409);
+     }else{
         User::create($request->all());
-        return $this->login($request);
+        $credentials = request(['email', 'password']);
+        if ($token = auth()->attempt($credentials)) {
+            User::generarMail($request->email, $token);
+        }
+        return $this->login($request); 
     }
+}
 
     /**
      * Get the authenticated User.
@@ -74,6 +90,10 @@ class AuthController extends Controller
         return $this->respondWithToken(auth()->refresh());
     }
 
+
+    public function verifiy(){
+        return response()->json(['message' => 'Correo verificado']);
+    }
     /**
      * Get the token array structure.
      *

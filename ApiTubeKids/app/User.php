@@ -4,7 +4,9 @@ namespace App;
 
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Mail;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -25,7 +27,7 @@ class User extends Authenticatable implements JWTSubject
       'birthdate', 
       'phone',
 
-    ];
+  ];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -62,4 +64,22 @@ class User extends Authenticatable implements JWTSubject
     {
         $this->attributes['password'] = bcrypt($value);
     }
+
+    public static function generarMail($pemail, $ptoken){
+
+        $data =[
+         'email' => $pemail,
+         'token' => $ptoken,
+         'subject'=>'Link de confirmacion de correo',
+         'bodyMessage'=>'Ingrese al siguiente link para confirmar su correo electronico'
+     ];
+
+     Mail::send('Email.index', $data ,function ($message) use ($data){
+
+        $message->from('leoantonio97@hotmail.com');
+        $message->to($data['email']);
+        $message->subject($data['subject']);
+        //Log::info('Mensaje borrado');
+    });
+ }
 }
