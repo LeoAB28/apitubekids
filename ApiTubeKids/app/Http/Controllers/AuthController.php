@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SignUpRequest;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 
 class AuthController extends Controller
@@ -32,28 +33,31 @@ class AuthController extends Controller
 
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Email or password does\'t exist'], 401);
+        } 
+        $user = DB::table('users')->where('email', request(['email']))->first();
+        if($user->verify_email){
+            return $this->respondWithToken($token);
+        }else{
+          return response()->json(['error' => 'Your email has not been confirmed'], 401);  
+      }
+  }
+
+  public function signup(SignUpRequest $request)
+  {
+
+            $date = Carbon::now();
+            $date = $date->format('d-m-Y');
+            $dateUser = $request->birthdate;
+            $dateUser = Carbon::parse($dateUser)->format('d-m-Y');
+            $years = Carbon::parse($dateUser)->age;
+
+            if($years<18){
+             return response()->json(['error'=>'You have to be older than 18 years', 'code'=>409], 409);
+         }else{
+            User::create($request->all());
+            User::generarMail($request->email); 
         }
-
-        return $this->respondWithToken($token);
-    }
-
-    public function signup(SignUpRequest $request)
-    {
-
-        $date = Carbon::now();
-        $date = $date->format('d-m-Y');
-        $dateUser = $request->birthdate;
-        $dateUser = Carbon::parse($dateUser)->format('d-m-Y');
-        $years = Carbon::parse($dateUser)->age;
-
-        if($years<18){
-         return response()->json(['error'=>'Tienes que ser mayor de 18 años', 'code'=>409], 409);
-     }else{
-        User::create($request->all());
-        User::generarMail($request->email);
-        return $this->login($request); 
-    }
-}
+   }
 
     /**
      * Get the authenticated User.
