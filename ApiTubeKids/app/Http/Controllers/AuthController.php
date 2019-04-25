@@ -47,8 +47,8 @@ class AuthController extends Controller
         $years = Carbon::parse($dateUser)->age;
 
         if($years<18){
-           return response()->json(['error'=>'Tienes que ser mayor de 18 años', 'code'=>409], 409);
-       }else{
+         return response()->json(['error'=>'Tienes que ser mayor de 18 años', 'code'=>409], 409);
+     }else{
         User::create($request->all());
         User::generarMail($request->email);
         return $this->login($request); 
@@ -99,7 +99,8 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()->name
+            'user' => auth()->user()->name,
+            'id' => auth()->user()->id
         ]);
     }
 }
