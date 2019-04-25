@@ -26,6 +26,7 @@ class User extends Authenticatable implements JWTSubject
       'country', 
       'birthdate', 
       'phone',
+      'verify_email',
 
   ];
 
@@ -65,11 +66,11 @@ class User extends Authenticatable implements JWTSubject
         $this->attributes['password'] = bcrypt($value);
     }
 
-    public static function generarMail($pemail, $ptoken){
+    public static function generarMail($pemail){
 
         $data =[
          'email' => $pemail,
-         'token' => $ptoken,
+         'url' => 'api/confirm/'.$pemail,
          'subject'=>'Link de confirmacion de correo',
          'bodyMessage'=>'Ingrese al siguiente link para confirmar su correo electronico'
      ];

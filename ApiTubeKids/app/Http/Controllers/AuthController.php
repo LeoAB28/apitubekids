@@ -47,13 +47,10 @@ class AuthController extends Controller
         $years = Carbon::parse($dateUser)->age;
 
         if($years<18){
-         return response()->json(['error'=>'Tienes que ser mayor de 18 años', 'code'=>409], 409);
-     }else{
+           return response()->json(['error'=>'Tienes que ser mayor de 18 años', 'code'=>409], 409);
+       }else{
         User::create($request->all());
-        $credentials = request(['email', 'password']);
-        if ($token = auth()->attempt($credentials)) {
-            User::generarMail($request->email, $token);
-        }
+        User::generarMail($request->email);
         return $this->login($request); 
     }
 }
@@ -88,11 +85,6 @@ class AuthController extends Controller
     public function refresh()
     {
         return $this->respondWithToken(auth()->refresh());
-    }
-
-
-    public function verifiy(){
-        return response()->json(['message' => 'Correo verificado']);
     }
     /**
      * Get the token array structure.

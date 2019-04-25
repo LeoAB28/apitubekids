@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+
+use Illumitate\Http\Request;
 use App\Http\Requests\ChangePasswordRequest;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 use App\User;
 
-class ChangePasswordController extends Controller
+class ConfirmEmailController extends Controller
 {
     public function process(ChangePasswordRequest $request)
     {
@@ -32,4 +33,18 @@ class ChangePasswordController extends Controller
         $this->getPasswordResetTableRow($request)->delete();
         return response()->json(['data'=>'Password Successfully Changed'],Response::HTTP_CREATED);
     }
+
+    public function confirmEmail($email){
+
+       $user = DB::table('users')->where('email',$email)->first();
+       if($user){
+
+        if($user->verify_email){
+            echo('<h1>Su correo ya a sido confirmado anteriormente!!</h1>');  
+        }else{
+            DB::table('users')->where(['email' => $user->email])->update(['verify_email' => true]);
+            echo('<h1>Gracias por confirmar su correo!!</h1>'); 
+        }
+    }   
+  }
 }

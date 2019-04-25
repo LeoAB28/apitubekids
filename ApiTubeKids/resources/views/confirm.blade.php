@@ -4,9 +4,8 @@
 	<meta charset="utf-8">
 </head>
 <body>
-	<h3>{{ $bodyMessage }}</h3>
 	<div class="table-container">
-		<a href="{{ url($url)}}" target="_blank">Confirmar</a>
+		<h1>Correo confirmado</h1>
 	</div>
 </body>
-</html>
+</html>  

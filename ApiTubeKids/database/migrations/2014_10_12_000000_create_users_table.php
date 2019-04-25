@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->string('country');
             $table->string('birthdate');
             $table->string('phone');
+            $table->boolean('verify_email')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
