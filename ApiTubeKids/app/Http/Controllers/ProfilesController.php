@@ -31,19 +31,19 @@ class ProfilesController extends Controller
         }
 
         public function addProfile(AddProfileRequest $request){
-            Profiles::create($request->all());
-            return response()->json(['message' => 'added successfully']);
+          Profiles::create($request->all());
+          return response()->json(['message' => 'added successfully']);
         }
 
 
         public function destroy($id){
-            $profile = DB::table('profiles')->where('id', $id)->first();
-            if($profile){
-                DB::table('profiles')->where('id', $id)->delete();
-                return response()->json(['data' => 'The Profile delete successfully'], 204);
-            }else{
-                return response()->json(['error' => 'The Profile does not exists'], 401);
-            }
+          $profile = DB::table('profiles')->where('id', $id)->first();
+          if($profile){
+            DB::table('profiles')->where('id', $id)->delete();
+            return response()->json(['data' => 'The Profile delete successfully'], 204);
+          }else{
+            return response()->json(['error' => 'The Profile does not exists'], 401);
+          }
         }
 
         public function putProfile(AddProfileRequest $request){
@@ -55,9 +55,9 @@ class ProfilesController extends Controller
 
           if($profile->save()){
             return response()->json(['data' => 'The Profile delete successfully'], 204);
-        } else{
-         return response()->json(['error' => 'The Profile does not exists'], 401);
+          } else{
+           return response()->json(['error' => 'The Profile does not exists'], 401);
+         }
+       }
      }
- }
-}
 

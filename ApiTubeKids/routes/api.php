@@ -17,5 +17,6 @@ Route::group([
 	Route::get('profileDelete/{id}', 'ProfilesController@destroy');
 	Route::put('putProfile', 'ProfilesController@putProfile');
 	Route::post('addVideo', 'PlaylistController@addVideo');
-	Route::get('getVideo', 'PlaylistController@getVideo');
+	Route::get('getVideo/{id}', 'PlaylistController@getVideo');
+	Route::delete('deleteVideo/{id}', 'PlaylistController@destroy');
 });
