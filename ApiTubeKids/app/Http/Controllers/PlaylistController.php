@@ -12,7 +12,7 @@ class PlaylistController extends Controller
 {
 	public function __construct()
 	{
-		$this->middleware('auth:api', ['except' => ['addVideo', 'getVideo', 'destroy']]);
+		$this->middleware('auth:api', ['except' => ['addVideo', 'getVideo', 'destroy', 'putVideo']]);
 	}
 
 	public function addVideo(AddPlaylistResquest $request){
@@ -37,6 +37,18 @@ class PlaylistController extends Controller
 			return response()->json(['data' => 'The Profile delete successfully'], 204);
 		}else{
 			return response()->json(['error' => 'The Profile does not exists'], 401);
+		}
+	}
+
+	public function putVideo(AddPlaylistResquest $request){
+		$playlist = Playlist::whereId($request->id)->first();
+		$playlist->name = $request->name;
+		$playlist->url = $request->url;
+
+		if($playlist->save()){
+			return response()->json(['data' => 'The Video delete successfully'], 204);
+		} else{
+			return response()->json(['error' => 'The Video does not exists'], 401);
 		}
 	}
 }

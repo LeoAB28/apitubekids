@@ -8,6 +8,7 @@ use App\Http\Requests\SignUpRequest;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Nexmo\Laravel\Facade\Nexmo;
 
 
 class AuthController extends Controller
@@ -45,19 +46,21 @@ class AuthController extends Controller
   public function signup(SignUpRequest $request)
   {
 
-            $date = Carbon::now();
-            $date = $date->format('d-m-Y');
-            $dateUser = $request->birthdate;
-            $dateUser = Carbon::parse($dateUser)->format('d-m-Y');
-            $years = Carbon::parse($dateUser)->age;
+    $date = Carbon::now();
+    $date = $date->format('d-m-Y');
+    $dateUser = $request->birthdate;
+    $dateUser = Carbon::parse($dateUser)->format('d-m-Y');
+    $years = Carbon::parse($dateUser)->age;
 
-            if($years<18){
-             return response()->json(['error'=>'You have to be older than 18 years', 'code'=>409], 409);
-         }else{
-            User::create($request->all());
-            User::generarMail($request->email); 
-        }
-   }
+    if($years<18){
+       return response()->json(['error'=>'You have to be older than 18 years', 'code'=>409], 409);
+   }else{
+    User::create($request->all());
+    User::generarMail($request->email);
+    $random = rand(1000,9999);
+    $this->sendSMS('506', $request->phone, $random);
+}
+}
 
     /**
      * Get the authenticated User.
@@ -105,6 +108,14 @@ class AuthController extends Controller
             'expires_in' => auth()->factory()->getTTL() * 60,
             'user' => auth()->user()->name,
             'id' => auth()->user()->id
+        ]);
+    }
+
+    public function sendSMS($country_code, $phone, $authy_id){
+        Nexmo::message()->send([
+            'to' =>$country_code.$phone,
+            'from' => ' TubeKids es',
+            'text' => 'Codigo de verificiacion de la cuenta TubeKids'.$authy_id.' confirmalo   '
         ]);
     }
 }

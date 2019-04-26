@@ -14,9 +14,10 @@ Route::group([
 	Route::post('resetPassword', 'ChangePasswordController@process');
 	Route::get('profiles/{id}', 'ProfilesController@getProfilesByIdFather');
 	Route::post('addProfile', 'ProfilesController@addProfile');
-	Route::get('profileDelete/{id}', 'ProfilesController@destroy');
+	Route::delete('deleteProfile/{id}', 'ProfilesController@deleteProfile');
 	Route::put('putProfile', 'ProfilesController@putProfile');
 	Route::post('addVideo', 'PlaylistController@addVideo');
 	Route::get('getVideo/{id}', 'PlaylistController@getVideo');
 	Route::delete('deleteVideo/{id}', 'PlaylistController@destroy');
+	Route::put('putVideo', 'PlaylistController@putVideo');
 });

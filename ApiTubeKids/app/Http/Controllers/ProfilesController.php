@@ -17,7 +17,7 @@ class ProfilesController extends Controller
      */
         public function __construct()
         {
-        	$this->middleware('auth:api', ['except' => ['getProfilesByIdFather', 'addProfile', 'destroy', 'putProfile']]);
+        	$this->middleware('auth:api', ['except' => ['getProfilesByIdFather', 'addProfile', 'deleteProfile', 'putProfile']]);
         }
 
         public function getProfilesByIdFather($id){
@@ -36,7 +36,7 @@ class ProfilesController extends Controller
         }
 
 
-        public function destroy($id){
+        public function deleteProfile($id){
           $profile = DB::table('profiles')->where('id', $id)->first();
           if($profile){
             DB::table('profiles')->where('id', $id)->delete();
