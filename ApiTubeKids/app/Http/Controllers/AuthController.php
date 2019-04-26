@@ -114,7 +114,7 @@ class AuthController extends Controller
     public function sendSMS($country_code, $phone, $authy_id){
         Nexmo::message()->send([
             'to' =>$country_code.$phone,
-            'from' => ' TubeKids es',
+            'from' => ' TubeKids es  ',
             'text' => 'Codigo de verificiacion de la cuenta TubeKids'.$authy_id.' confirmalo   '
         ]);
     }
